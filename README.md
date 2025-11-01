@@ -68,8 +68,6 @@ The simulation tracks:
 
 ## Architecture
 
-See [OUTLINE.md](./OUTLINE.md) for the complete design specification.
-
 The game loop works as follows:
 1. World Master generates available actions in TOML format
 2. CEO analyzes actions and decides whether to act or escalate
