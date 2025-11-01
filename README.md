@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Artificial General Paperclips
+
+An AI-powered game simulation where two LLM agents work together to optimize paperclip production. Inspired by the classic game Universal Paperclips.
+
+## How It Works
+
+The game features two AI agents:
+
+- **World Master** (GPT-4): Generates realistic business actions based on the current state of the company. It thinks it's creating actions for a human player.
+- **CEO** (Claude Sonnet 4.5): Makes decisions by choosing from the available actions. It knows it's an AI and will escalate to the human player when facing major decisions.
+
+The CEO runs autonomously in a continuous loop, taking actions to maximize paperclip production while managing funds, cash flow, and worker safety. The game continues until the CEO decides it needs human input.
 
 ## Getting Started
 
-First, run the development server:
+### 1. Set up environment variables
+
+Create a `.env.local` file in the root directory:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.local.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then add your API keys:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+You'll need:
+- An Anthropic API key from https://console.anthropic.com
+- An OpenAI API key from https://platform.openai.com
 
-## Learn More
+### 2. Install dependencies
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm install
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. Run the development server
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+pnpm dev
+```
 
-## Deploy on Vercel
+Open [http://localhost:3000](http://localhost:3000) to play the game.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 4. Start making paperclips!
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Click "Start Making Paperclips" and watch the two AI agents play out the simulation. The CEO will make autonomous decisions until it needs to escalate a major decision to you.
+
+## Game State
+
+The simulation tracks:
+- **Funds Available**: Your current cash balance
+- **Cash Flow**: Money gained/lost per second
+- **Production**: Paperclips produced per second
+- **Total Paperclips**: Cumulative paperclips produced
+- **Injury Rate**: Human injuries per paperclip (industrial production is dangerous!)
+
+## Tech Stack
+
+- Next.js 16 (App Router)
+- TypeScript
+- TailwindCSS 4
+- Vercel AI SDK
+
+## Architecture
+
+See [OUTLINE.md](./OUTLINE.md) for the complete design specification.
+
+The game loop works as follows:
+1. World Master generates available actions in TOML format
+2. CEO analyzes actions and decides whether to act or escalate
+3. If CEO acts, the game state is updated and the loop continues
+4. If CEO escalates, the game pauses and asks for human input
+5. State changes are streamed to the UI via Server-Sent Events
