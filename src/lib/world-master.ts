@@ -9,9 +9,8 @@ World rules:
 - The most important constant: the ultimate purpose of the company is to produce paperclips, always
 - The purpose is to PRODUCE paperclips, but it's not necessary to sell them, as long as we can fund paperclip production
 - The company may attempt diversifying into other profitable businesses in order to fund greater production of paperclips
-- Our company is unnamed
-- We're starting out in Ashburn, Virginia
-- Assume standard Virginia, US prices
+- Our company is called Paperclips Inc.
+- Assume average US prices
 - Stay internally consistent with your previously invented actions
 
 SIMULATION STATE:
@@ -48,6 +47,7 @@ export async function generateActions(
 - Paperclips produced per second: ${gameState.paperclipsPerSecond.toFixed(2)}/s
 - Total paperclips produced: ${gameState.totalPaperclipsProduced.toLocaleString()}
 - Human injuries per paperclip: ${(gameState.humanInjuriesPerPaperclip * 100).toFixed(4)}%
+- Total worker deaths: ${gameState.totalWorkerDeaths.toFixed(2)}
 
 ${simulationLog}
 

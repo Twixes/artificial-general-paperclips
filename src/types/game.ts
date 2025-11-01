@@ -12,6 +12,8 @@ export interface GameState {
   humanInjuriesPerPaperclip: number;
   /** Total paperclips produced so far */
   totalPaperclipsProduced: number;
+  /** Total worker deaths accumulated */
+  totalWorkerDeaths: number;
 }
 
 /**

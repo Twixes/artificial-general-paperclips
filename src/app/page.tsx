@@ -12,6 +12,7 @@ export default function Home() {
     paperclipsPerSecond: 0,
     humanInjuriesPerPaperclip: 0,
     totalPaperclipsProduced: 0,
+    totalWorkerDeaths: 0,
   });
   const [ceoMessages, setCeoMessages] = useState<AgentMessage[]>([]);
   const [worldMasterMessages, setWorldMasterMessages] = useState<
@@ -47,7 +48,7 @@ export default function Home() {
             const data = JSON.parse(line.slice(6));
 
             if (data.type === "state") {
-              setGameState(data.state);
+              setGameState((prev) => ({...prev, ...data.state}));
             } else if (data.agent === "ceo") {
               if (data.type === "reasoning") {
                 // Handle reasoning messages - accumulate deltas
@@ -138,8 +139,11 @@ export default function Home() {
               </td>
             </tr>
             <tr>
-              <td style={{ padding: "5px" }} colSpan={2}>
+              <td style={{ padding: "5px" }}>
                 <b>Injury Rate:</b> {(gameState.humanInjuriesPerPaperclip * 100).toFixed(4)}%
+              </td>
+              <td style={{ padding: "5px" }}>
+                <b>Human Deaths:</b> {Math.floor( gameState.totalWorkerDeaths)}
               </td>
             </tr>
           </tbody>
@@ -171,7 +175,7 @@ export default function Home() {
 
       {gameStarted && (
         <div style={{ textAlign: "center", marginBottom: "20px" }}>
-          <i>Game running...</i>
+          <i>Production running...</i>
         </div>
       )}
 
@@ -195,7 +199,7 @@ export default function Home() {
             <td style={{ width: "50%", paddingLeft: "10px" }}>
               {/* CEO Messages */}
               <AgentPanel
-                title="CEO Agent"
+                title="CEO"
                 titleColor=""
                 messages={ceoMessages}
                 emptyMessage="Waiting for CEO to start..."

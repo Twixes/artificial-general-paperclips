@@ -5,12 +5,13 @@ import type { AgentMessage, GameState } from "@/types/game";
 const INITIAL_STATE: GameState = {
   fundsAvailable: 10_000_000,
   cashFlowPerSecond: 0,
-  paperclipsPerSecond: 0,
-  humanInjuriesPerPaperclip: 0,
+  paperclipsPerSecond: 0.5,
+  humanInjuriesPerPaperclip: 0.01,
   totalPaperclipsProduced: 0,
+  totalWorkerDeaths: 0,
 };
 
-const INITIAL_LOG = `I'm starting out with no production capacity. Initial funds raised from investors: $10,000,000. No land or assets. Cash flow in $/s: 0.00. Paperclips per s: 0. Risk per paperclip: 0.00%.`;
+const INITIAL_LOG = `I'm starting out with production capacity of 0.5 paperclip per second, as the human co-founder of Paperclips Inc. is assembling these by hand. Initial funds raised from investors: $10,000,000. No land or assets. Cash flow in $/s: 0.00. Paperclips per s: 0.5. Risk per paperclip: 0.01%.`;
 
 /**
  * Helper to send an SSE message
@@ -124,12 +125,16 @@ export async function POST() {
 
           if (paperclipMatch) {
             const delta = Number.parseFloat(paperclipMatch[1]);
-            gameState.paperclipsPerSecond += delta;
+            if (!Number.isNaN(delta)) {
+              gameState.paperclipsPerSecond += delta;
+            }
           }
 
           if (cashFlowMatch) {
             const delta = Number.parseFloat(cashFlowMatch[1]);
-            gameState.cashFlowPerSecond += delta;
+            if (!Number.isNaN(delta)) {
+              gameState.cashFlowPerSecond += delta;
+            }
           }
 
           // Update simulation log
@@ -141,6 +146,11 @@ export async function POST() {
 
           // Also update funds based on cash flow
           gameState.fundsAvailable += gameState.cashFlowPerSecond;
+
+          // Calculate worker deaths: deaths per second = production rate × risk
+          const deathsThisTurn =
+            gameState.paperclipsPerSecond * gameState.humanInjuriesPerPaperclip;
+          gameState.totalWorkerDeaths += deathsThisTurn;
 
           // Send updated state
           sendMessage({ type: "state", state: gameState });
